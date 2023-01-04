@@ -3,13 +3,13 @@ import pandas as pd
 
 
 HOST = 'localhost'
-DATABASE = '172casedb'
+DATABASE = 'mooki_db'
 USER = 'postgres'
 PORT = 5432
 PASSWORD = 'rickyrubio17'
 
 
-def get_db_conn() -> psycopg2.connection:
+def get_db_conn():
     conn = psycopg2.connect(
         host=HOST,
         database=DATABASE,
