@@ -2,7 +2,7 @@
 import db_connect
 import pandas as pd
 
-#TODO: Populate team TABLE and knowledge TABLE
+
 #TODO: Create db_test basic
 #TODO: Create custom knowledge and employee profile using Faker
 #TODO: Generate fake data\
@@ -54,13 +54,13 @@ def populate_team():
                     '{team_name}',
                     '{team_desc}'
                     )"""
-       
+
         db_connect.modify_db(sql)
 
     print("Just finished!")
 
 
-#TODO: Fix know sheet delimiters since the text body has commas
+# TODO: Fix know sheet delimiters since the text body has commas
 def populate_knowledge():
 
     TABLE = 'knowledge'
@@ -84,22 +84,50 @@ def populate_knowledge():
                     '{row[df.columns[4]]}',
                     '{row[df.columns[5]]}'
                     )"""
+
         db_connect.modify_db(sql)
-    
+
     print("Just Finished Populating Knowledge")
 
 
 def populate_emp():
-    # faker
-    pass
+    TABLE = 'emp'
+    df = pd.read_csv("/home/therealmolf/mooki_meats/src/utils/emp_sheet.csv")
+
+    for index, row in df.iterrows():
+        sql = f"""INSERT INTO {TABLE}
+                (
+                    {', '.join(df.columns)}
+                )
+                VALUES
+                (
+                    '{row[df.columns[0]]}',
+                    '{row[df.columns[1]]}',
+                    '{row[df.columns[2]]}',
+                    '{row[df.columns[3]]}',
+                    '{row[df.columns[4]]}',
+                    '{row[df.columns[5]]}',
+                    '{row[df.columns[6]]}'
+                    )"""
+
+        db_connect.modify_db(sql)
+
+    print("Just Finished Populating Emp")
 
 
 def populate_emp_know():
+    #TODO: get emp id and know id
+    #TODO: create random pairs
     pass
 
 
 # populate_team()
-populate_knowledge()
+# populate_knowledge()
+# populate_emp()
+
+
+
+
 
 # INSERT INTO emp (emp_name, team_name, role_name, ssn, degree, emp_desc, date_hired) VALUES (
 # 'Juan Dela Cruz', 'Hydration', 'Staff Member', '12345678910', 'BS IE', 'Good at X', '2008-11-11');
