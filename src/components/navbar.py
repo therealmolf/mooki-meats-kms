@@ -10,7 +10,7 @@ def Navbar():
         dbc.Navbar(
             children=[
                 html.A([
-                    html.Span("Mooki",
+                    html.Span("Mooki Meats",
                               className="ms-md-1 mt-1 fw-bolder me-md-5",
                               style={
                                     "color": "green",
