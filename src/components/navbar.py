@@ -17,8 +17,9 @@ def Navbar():
                               }
                               ),
                 ],
-                    className="navbar-brand pe-md-4 fs-4 col-12 col-md-auto text-center",
-                    href="/page1",
+                    className="navbar-brand pe-md-4 fs-4 col-12 \
+                        col-md-auto text-center",
+                    href="/home",
                     style={
                         "textAlign": 'left'
                     }
@@ -26,37 +27,38 @@ def Navbar():
                 html.Ul([
                     dbc.NavItem(
                         dbc.NavLink(
-                            "Approve", 
-                            href="/page1",
+                            "Approve",
+                            href="/approve_page",
                             className="nav-link fs-5"),
                         className="nav-item"
                     ),
                     dbc.NavItem(
                         dbc.NavLink(
-                            "Update", 
-                            href="/page2",
+                            "Update",
+                            href="/update_page",
                             className="nav-link fs-5"),
                         className="nav-item"
                     ),
                     dbc.NavItem(
                         dbc.NavLink(
-                            "About", 
-                            href="/page1",
+                            "About",
+                            href="/about_page",
                             className="nav-link fs-5"),
                         className="nav-item"
                     ),
                 ],
-                    className="navbar-nav mx-auto mb-2 mb-lg-0 list-group list-group-horizontal"
+                    className="navbar-nav mx-auto mb-2 mb-lg-0 \
+                        list-group list-group-horizontal"
                 ),
                 dbc.Button(
                     "Propose Knowledge",
                     outline=True,
-                    href="/page2",
+                    href="/proposal_page",
                     color="light",
-                    className="me-1"),
+                    className="btn btn-outline-light"),
             ],
             className="navbar navbar-dark bg-black fixed-top px-vw-5",
-        ), 
+        ),
     ])
 
     return layout
