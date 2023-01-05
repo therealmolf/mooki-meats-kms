@@ -6,7 +6,6 @@ import random
 
 #TODO: Create db_test basic
 #TODO: Update Database by adding delete booleans
-#TODO: Place in database via refactored db_connect
 #TODO: Create FTS test
 #TODO: Create Update test
 # for me not to have to separately populate, need to seed random data
@@ -164,7 +163,7 @@ def populate_emp_know(num=30):
                 )
         """
         db_connect.modify_db(sql)
-    
+
     print("Just Finished Populating emp_know")
 
 
@@ -172,20 +171,3 @@ def populate_emp_know(num=30):
 # populate_knowledge()
 # populate_emp()
 # populate_emp_know()
-
-
-
-
-# INSERT INTO emp (emp_name, team_name, role_name, ssn, degree, emp_desc, date_hired) VALUES (
-# 'Juan Dela Cruz', 'Hydration', 'Staff Member', '12345678910', 'BS IE', 'Good at X', '2008-11-11');
-
-#INSERT INTO knowledge (know_type, know_name, know_desc, prop_date, prop_by, app_status) VALUES (
-#mooki_db(# 'Info', 'TVP', 'Textured vegetable protein (TVP), 
-#also known as textured soy protein (TSP), is a high-protein, 
-# low-fat product made from soy flour. It is often used as a 
-# meat substitute in vegetarian dishes and is known for its 
-# ability to absorb flavors well. TVP is often sold in the form of flakes or 
-# chunks and must be rehydrated before use. It is a good source of protein 
-# for vegetarians and vegans, and it is also used in some non-vegetarian 
-# dishes as a way to add protein and reduce the amount of meat needed.',
-# '1960-01-01 23:03:20', 'Juan Dela Cruz', 'Approved');
