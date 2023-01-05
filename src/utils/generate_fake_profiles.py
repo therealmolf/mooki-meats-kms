@@ -64,7 +64,10 @@ def generate_fake_profiles(num=10):
     return df
 
 
-generate_fake_profiles(50).to_csv("/home/therealmolf/mooki_meats/src/utils/emp_sheet.csv", index=False)
+generate_fake_profiles(50).to_csv("/home/therealmolf/mooki_meats/src/utils/\
+    emp_sheet.csv", index=False)
 
-# INSERT INTO emp (emp_name, team_name, role_name, ssn, degree, emp_desc, date_hired) VALUES (
-# 'Juan Dela Cruz', 'Hydration', 'Staff Member', '12345678910', 'BS IE', 'Good at X', '2008-11-11');
+# INSERT INTO emp (emp_name, team_name, role_name, ssn, degree,
+# emp_desc, date_hired) VALUES (
+# 'Juan Dela Cruz', 'Hydration', 'Staff Member', '12345678910',
+# 'BS IE', 'Good at X', '2008-11-11');

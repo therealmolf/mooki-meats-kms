@@ -1,14 +1,12 @@
 # pip install Faker
 import db_connect
 import pandas as pd
+import random
 
 
 #TODO: Create db_test basic
-#TODO: Create custom knowledge and employee profile using Faker
-#TODO: Generate fake data\
 #TODO: Update Database by adding delete booleans
 #TODO: Place in database via refactored db_connect
-#TODO: Populate emp_know TABLE and team TABLE using the data in database
 #TODO: Create FTS test
 #TODO: Create Update test
 # for me not to have to separately populate, need to seed random data
@@ -115,16 +113,65 @@ def populate_emp():
     print("Just Finished Populating Emp")
 
 
-def populate_emp_know():
-    #TODO: get emp id and know id
-    #TODO: create random pairs
-    pass
+def flatten(given: list) -> list:
+    return [item for sublist in given for item in sublist]
+
+
+def get_id_list(col: str, table: str) -> list:
+
+    """
+        Gets list of ids from postgres table. Need to get it
+        from the table for consistency.
+
+        Parameters
+        ------------
+        col: column name of id on the table
+        table: name of table
+
+        Returns
+        ------------
+        flattened list of ids
+    """
+
+    sql = f"SELECT ({col}) FROM {table}"
+    id_list = db_connect.query_db(sql).values.tolist()
+
+    return flatten(id_list)
+
+
+def populate_emp_know(num=30):
+
+    know_ids = get_id_list("know_id", "knowledge")
+    emp_ids = get_id_list("emp_id", "emp")
+    table = "emp_know"
+
+    #get set of 50 unique
+
+
+    for i in range(num):
+        emp = random.choice(emp_ids)
+        know = random.choice(know_ids)
+
+        sql = f"""INSERT INTO {table}
+                (
+                    emp_id,
+                    know_id
+                )
+                VALUES
+                (
+                    '{emp}',
+                    '{know}'
+                )
+        """
+        db_connect.modify_db(sql)
+    
+    print("Just Finished Populating emp_know")
 
 
 # populate_team()
 # populate_knowledge()
 # populate_emp()
-
+# populate_emp_know()
 
 
 
