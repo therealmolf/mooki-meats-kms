@@ -51,8 +51,16 @@ layout = html.Div([
                             color="light",
                             id="team-search-btn"
                             ),
-                        dbc.Button("Employee", outline=True, color="light"),
-                        dbc.Button("Knowledge", outline=True, color="light"),
+                        dbc.Button(
+                            "Employee",
+                            outline=True,
+                            color="light",
+                            id="emp-search-btn"),
+                        dbc.Button(
+                            "Knowledge",
+                            outline=True,
+                            color="light",
+                            id="know-search-btn"),
                     ],
                 )
               ],
@@ -71,7 +79,7 @@ layout = html.Div([
                         [
                             html.H5("Search Results:"),
                             html.Div(
-                                "The search table should go here",
+                                "",
                                 id="search-table"
                                 )
                         ],
@@ -95,10 +103,15 @@ layout = html.Div([
         Output('search-table', "children"),
     ],
     [
-        Input("team-search-btn", 'n_clicks')
+        Input("team-search-btn", 'n_clicks'),
+        Input("emp-search-btn", "n_clicks"),
+        Input("know-search-btn", "n_clicks"),
     ]
 )
-def team_search(team_search_btn):
+def btn_search(team_search_btn,
+    emp_search_btn,
+    know_search_btn
+):
     if ctx.triggered:
         event_id = ctx.triggered_id
         print(event_id)
@@ -124,5 +137,48 @@ def team_search(team_search_btn):
             return [table]
         else:
             return ["No records to display"]
+
+    if event_id == 'emp-search-btn' and emp_search_btn:
+        sql = """
+            SELECT * FROM emp
+        """
+
+        df = db_connect.query_db(sql)
+
+        if not df.empty:
+            table = dbc.Table.from_dataframe(
+                df,
+                bordered=True,
+                dark=True,
+                hover=True,
+                responsive=True,
+                striped=True,
+            )
+            return [table]
+        else:
+            return ["No records to display"]
+
+    if event_id == 'know-search-btn' and know_search_btn:
+        sql = """
+            SELECT * FROM knowledge
+        """
+
+        df = db_connect.query_db(sql)
+
+        if not df.empty:
+            table = dbc.Table.from_dataframe(
+                df,
+                bordered=True,
+                dark=True,
+                hover=True,
+                responsive=True,
+                striped=True,
+            )
+            return [table]
+        else:
+            return ["No records to display"]
     else:
         raise PreventUpdate
+
+
+# Callback for Search
