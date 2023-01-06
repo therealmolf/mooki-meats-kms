@@ -1,4 +1,4 @@
-# Import necessary libraries 
+# Import necessary libraries
 from dash import html, dcc
 from dash.dependencies import Input, Output
 
