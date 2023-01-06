@@ -4,13 +4,6 @@ import pandas as pd
 import random
 
 
-#TODO: Create db_test basic
-#TODO: Update Database by adding delete booleans
-#TODO: Create FTS test
-#TODO: Create Update test
-# for me not to have to separately populate, need to seed random data
-
-
 TEAM_DATA = [
     ("TVP",
         "In charge of receiving Textured Vegetable Protein"),

@@ -30,7 +30,7 @@ sql = """
     ON knowledge.know_id = emp_know.know_id
     WHERE know_name = 'Regulatory Framework'
 """
-print(db_connect.query_db(sql))
+# print(db_connect.query_db(sql))
 
 
 # TODO: Full Text Search for Single Table
@@ -41,12 +41,41 @@ sql = f"""
         WHERE to_tsvector('english', know_desc) @@ 
         plainto_tsquery('{search_query}');
 """
-
 # print(db_connect.query_db(sql))
 
 
-# TODO: Full Text Search for Joined Table
-# TODO: Selects team/employee/knowledge + search doc?
+# TODO: Full Text Search for Joined 
+# TODO: INNER JOIN the team table
+# Selects team/employee/knowledge + search doc?
+search_query = "Protein Demand"
+sql = f"""
+        SELECT
+            (
+                emp.emp_name,
+                emp.team_name,
+                knowledge.know_name
+            )
+        FROM
+        emp
+        INNER JOIN emp_know
+        ON emp.emp_id = emp_know.emp_id
+        INNER JOIN knowledge
+        ON knowledge.know_id = emp_know.know_id
+        WHERE to_tsvector(
+            'english',
+            concat_ws(
+                ' ',
+                know_desc,
+                emp_desc,
+                emp_name,
+                team_name,
+                degree,
+                date_hired,
+                know_name
+                )) @@ 
+        plainto_tsquery('{search_query}');
+"""
+print(db_connect.query_db(sql))
 
 
 # TODO: Full Text Search with Ranking
