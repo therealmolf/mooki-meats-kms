@@ -23,13 +23,14 @@ layout = html.Div([
                             "What do you ",
                             html.Span(
                                 "need",
-                                style={"color": "green"}),
+                                style={"color": "#224B0C"}),
                             "?"],
                             className="display-huge mt-3 mb-3 lh-1"
                         ),
                         html.Span(
-                            "Type whatever you need to get!",
-                            className="h5 text-secondary fw-lighter")
+                            "This is a full text search engine that gives you the team, employee,\
+                                and knowledge that are related to each other. Give it a try!",
+                            className="h5 text-secondary fw-lighter",)
                     ],
                     className="col-12 col-xl-10"
                 ),
@@ -90,6 +91,9 @@ layout = html.Div([
             )
         ],
         className="bg-dark"
+    ),
+    html.Div(
+        className="bg-black py-vh-4"
     )
 ],
     className="w-100 overflow-hidden position-relative \
@@ -98,6 +102,7 @@ layout = html.Div([
 
 
 # Callback for Team Button
+# TODO: Refactor
 @app.callback(
     [
         Output('search-table', "children"),
@@ -106,24 +111,57 @@ layout = html.Div([
         Input("team-search-btn", 'n_clicks'),
         Input("emp-search-btn", "n_clicks"),
         Input("know-search-btn", "n_clicks"),
+        Input("search-input", "value")
     ]
 )
-def btn_search(team_search_btn,
+def btn_search(
+    team_search_btn,
     emp_search_btn,
-    know_search_btn
+    know_search_btn,
+    search_input
 ):
     if ctx.triggered:
         event_id = ctx.triggered_id
-        print(event_id)
+        # print(event_id)
     else:
         raise PreventUpdate
+    
+    if event_id == 'search-input' and search_input:
+        sql = f"""
+            SELECT
+                emp.emp_name,
+                emp.team_name,
+                knowledge.know_name
+            FROM
+            emp
+            INNER JOIN team
+            ON team.team_name = emp.team_name
+            INNER JOIN emp_know
+            ON emp.emp_id = emp_know.emp_id
+            INNER JOIN knowledge
+            ON knowledge.know_id = emp_know.know_id
+            WHERE to_tsvector(
+                'english',
+                concat_ws(
+                    ' ',
+                    know_desc,
+                    team_desc,
+                    emp_desc,
+                    emp_name,
+                    emp.team_name,
+                    degree,
+                    date_hired,
+                    know_name
+                    )) @@ 
+            plainto_tsquery('{search_input}');
+            """
+        cols = [
+            "Employee",
+            "Team",
+            "Knowledge"
+        ]
 
-    if event_id == 'team-search-btn' and team_search_btn:
-        sql = """
-            SELECT * FROM team
-        """
-
-        df = db_connect.query_db(sql)
+        df = db_connect.query_db(sql, df_col=cols)
 
         if not df.empty:
             table = dbc.Table.from_dataframe(
@@ -133,6 +171,29 @@ def btn_search(team_search_btn,
                 hover=True,
                 responsive=True,
                 striped=True,
+                className="table table-primary",
+            )
+            return [table]
+        else:
+            return ["No records to display"]
+
+    if event_id == 'team-search-btn' and team_search_btn:
+        sql = """
+            SELECT * FROM team
+        """
+        cols = ["Team", "Team Description"]
+
+        df = db_connect.query_db(sql, df_col=cols)
+
+        if not df.empty:
+            table = dbc.Table.from_dataframe(
+                df,
+                bordered=True,
+                dark=True,
+                hover=True,
+                responsive=True,
+                striped=True,
+                className="table table-primary",
             )
             return [table]
         else:
@@ -142,8 +203,19 @@ def btn_search(team_search_btn,
         sql = """
             SELECT * FROM emp
         """
+        cols = [
+            "ID",
+            "Employee",
+            "Team",
+            "Role",
+            "SSN",
+            "Course",
+            "Description",
+            "Date Hired",
+            "Delete Ind"
+            ]
 
-        df = db_connect.query_db(sql)
+        df = db_connect.query_db(sql, df_col=cols)
 
         if not df.empty:
             table = dbc.Table.from_dataframe(
@@ -162,8 +234,17 @@ def btn_search(team_search_btn,
         sql = """
             SELECT * FROM knowledge
         """
-
-        df = db_connect.query_db(sql)
+        cols = [
+            "Knowledge ID",
+            "Type",
+            "Title",
+            "Content",
+            "Proposal Date",
+            "Proposed By",
+            "Approval Status",
+            "Delete Ind"
+        ]
+        df = db_connect.query_db(sql, df_col=cols)
 
         if not df.empty:
             table = dbc.Table.from_dataframe(
@@ -181,4 +262,10 @@ def btn_search(team_search_btn,
         raise PreventUpdate
 
 
-# Callback for Search
+# # Callback for Search
+# @app.callback(
+#     Output("search-table", "children"),
+#     Input("search-input", "value")
+# )
+# def full_text_search(search_input):
+#     return f"This is the input: {search_input}"

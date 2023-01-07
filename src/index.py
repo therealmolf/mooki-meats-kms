@@ -19,7 +19,9 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     nav,
     html.Div(id='page-content', children=[]),
-])
+],
+    className="bg-black"
+)
 
 
 # Create the callback to handle mutlipage inputs
@@ -43,4 +45,4 @@ def display_page(pathname):
 
 # Run the app on localhost:8050
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)

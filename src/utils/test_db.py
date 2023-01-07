@@ -1,12 +1,15 @@
 
 import db_connect
 
-#TODO: Create test for adding, deleting to emp (admin)
-#TODO: Create test for proposing, approving, and deleting to knowledge
-#TODO: Create test for updating tagging emp_know "who do you think knows this?"
 
 #TODO: Create test for querying emp and knowledge
-#TODO: Create test for FTS
+#TODO: Create test for FTS with ranking
+# TODO: Update Database by adding delete booleans
+
+# TODO: Only select rows that have not been deleted for Employee
+# TODO: No option to delete a team
+# TODO: For knowledge, show only type, name, prop by, then show only approved and not deleted
+# TODO: Make knowledge clickable that goes into a knowledge page
 
 
 # Pattern Matching Query for Single Table
@@ -45,9 +48,15 @@ sql = f"""
 
 
 # TODO: Full Text Search for Joined 
-# TODO: INNER JOIN the team table
+# TODO: INNER JOIN the team table, Add Ranking
 # Selects team/employee/knowledge + search doc?
-search_query = "Protein Demand"
+search_query = "Protein Demand by Delgado"
+search_query = "David Pearson"
+search_query = "Spanish Food"
+
+#Shannon returns an empty column because I don't think she is
+# associated with any issue
+search_query = "Shannon"
 sql = f"""
         SELECT
             (
@@ -57,6 +66,8 @@ sql = f"""
             )
         FROM
         emp
+        INNER JOIN team
+        ON team.team_name = emp.team_name
         INNER JOIN emp_know
         ON emp.emp_id = emp_know.emp_id
         INNER JOIN knowledge
@@ -66,13 +77,14 @@ sql = f"""
             concat_ws(
                 ' ',
                 know_desc,
+                team_desc,
                 emp_desc,
                 emp_name,
-                team_name,
+                emp.team_name,
                 degree,
                 date_hired,
                 know_name
-                )) @@ 
+                )) @@
         plainto_tsquery('{search_query}');
 """
 print(db_connect.query_db(sql))

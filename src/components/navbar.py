@@ -13,7 +13,7 @@ def Navbar():
                     html.Span("Mooki Meats",
                               className="ms-md-1 mt-1 fw-bolder me-md-5",
                               style={
-                                    "color": "green",
+                                    "color": "#224B0C",
                               }
                               ),
                 ],
