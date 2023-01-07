@@ -55,7 +55,7 @@ def Navbar():
                     outline=True,
                     href="/proposal_page",
                     color="light",
-                    className="btn btn-outline-light"),
+                    className="btn btn-success fw-bolder"),
             ],
             className="navbar navbar-dark bg-black fixed-top px-vw-5",
         ),

@@ -37,12 +37,18 @@ layout = html.Div([
                 html.Div(
                     [
                         html.Br(),
-                        dbc.Input(
-                            id="search-input",
-                            placeholder="Type something...", type="text"),
+                        dbc.Col(
+                            dbc.Input(
+                                id="search-input",
+                                placeholder="Type something...", 
+                                type="text",
+                                valid=True,
+                            ),
+                            width=30
+                        ),
                         html.P(id="output"),
                     ],
-                    className="col-12 col-xl-8"
+                    className="col-12 col-xl-13"
                 ),
                 dbc.ButtonGroup(
                     [
