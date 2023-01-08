@@ -1429,7 +1429,7 @@ progress {
   --bs-table-striped-color: #111;
   --bs-table-active-bg: lightgray;
   --bs-table-active-color: #111;
-  --bs-table-hover-bg: #d8d8d8;
+  --bs-table-hover-bg: #ADE792;
   --bs-table-hover-color: #111;
   color: var(--bs-table-color);
   border-color: var(--bs-table-border-color); }

@@ -10,8 +10,8 @@ from app import app
 layout = html.Div([
     html.Div(
         [],
-        className="position-absolute w-100 h-100 \
-            bg-black opacity-75 top-0 start-0"
+        # className="position-absolute w-100 h-100 \
+        #     bg-black opacity-75 top-0 start-0"
     ),
     html.Div(
         [
@@ -84,7 +84,6 @@ layout = html.Div([
                 [
                     html.Div(
                         [
-                            html.H5("Search Results:"),
                             html.Div(
                                 "",
                                 id="search-table"
@@ -99,7 +98,7 @@ layout = html.Div([
         className="bg-dark"
     ),
     html.Div(
-        className="bg-black py-vh-4"
+        className="bg-black py-vh-5"
     )
 ],
     className="w-100 overflow-hidden position-relative \
@@ -172,12 +171,8 @@ def btn_search(
         if not df.empty:
             table = dbc.Table.from_dataframe(
                 df,
-                bordered=True,
-                dark=True,
-                hover=True,
-                responsive=True,
-                striped=True,
-                className="table table-primary",
+                className="table table-secondary table-striped \
+                    table-bordered table-hover fs-5",
             )
             return [table]
         else:
@@ -194,12 +189,7 @@ def btn_search(
         if not df.empty:
             table = dbc.Table.from_dataframe(
                 df,
-                # bordered=True,
-                # dark=True,
-                # hover=True,
-                # responsive=True,
-                # striped=True,
-                className="table table-success table-striped \
+                className="table table-secondary table-striped \
                     table-bordered table-hover fs-4",
             )
             return [table]
@@ -208,10 +198,18 @@ def btn_search(
 
     if event_id == 'emp-search-btn' and emp_search_btn:
         sql = """
-            SELECT * FROM emp
+            SELECT 
+                emp_name,
+                team_name,
+                role_name,
+                ssn,
+                degree,
+                emp_desc,
+                date_hired
+            FROM emp
+            WHERE emp_delete_ind IS NULL
         """
         cols = [
-            "ID",
             "Employee",
             "Team",
             "Role",
@@ -219,7 +217,6 @@ def btn_search(
             "Course",
             "Description",
             "Date Hired",
-            "Delete Ind"
             ]
 
         df = db_connect.query_db(sql, df_col=cols)
@@ -227,11 +224,8 @@ def btn_search(
         if not df.empty:
             table = dbc.Table.from_dataframe(
                 df,
-                bordered=True,
-                dark=True,
-                hover=True,
-                responsive=True,
-                striped=True,
+                className="table table-secondary table-striped \
+                    table-bordered table-hover fs-6",
             )
             return [table]
         else:
@@ -239,40 +233,33 @@ def btn_search(
 
     if event_id == 'know-search-btn' and know_search_btn:
         sql = """
-            SELECT * FROM knowledge
+            SELECT 
+                know_type,
+                know_name,
+                know_desc,
+                prop_date,
+                prop_by
+            FROM knowledge
+            WHERE know_delete_ind IS NULL
+            AND app_status = 'Approved'
         """
         cols = [
-            "Knowledge ID",
             "Type",
             "Title",
             "Content",
             "Proposal Date",
             "Proposed By",
-            "Approval Status",
-            "Delete Ind"
         ]
         df = db_connect.query_db(sql, df_col=cols)
 
         if not df.empty:
             table = dbc.Table.from_dataframe(
                 df,
-                bordered=True,
-                dark=True,
-                hover=True,
-                responsive=True,
-                striped=True,
+                className="table table-secondary table-striped \
+                    table-bordered table-hover fs-6",
             )
             return [table]
         else:
             return ["No records to display"]
     else:
         raise PreventUpdate
-
-
-# # Callback for Search
-# @app.callback(
-#     Output("search-table", "children"),
-#     Input("search-input", "value")
-# )
-# def full_text_search(search_input):
-#     return f"This is the input: {search_input}"
