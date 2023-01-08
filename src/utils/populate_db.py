@@ -137,9 +137,6 @@ def populate_emp_know(num=30):
     emp_ids = get_id_list("emp_id", "emp")
     table = "emp_know"
 
-    #get set of 50 unique
-
-
     for i in range(num):
         emp = random.choice(emp_ids)
         know = random.choice(know_ids)
