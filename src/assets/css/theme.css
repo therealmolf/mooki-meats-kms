@@ -12,7 +12,7 @@
   --bs-red: #dc3545;
   --bs-orange: #fd7e14;
   --bs-yellow: #ffc107;
-  --bs-green: #198754;
+  --bs-green: #224B0C;
   --bs-teal: #20c997;
   --bs-cyan: #0dcaf0;
   --bs-white: #fff;
@@ -29,7 +29,7 @@
   --bs-gray-900: #202020;
   --bs-primary: #1717e5;
   --bs-secondary: #8a8a8e;
-  --bs-success: #198754;
+  --bs-success: #224B0C;
   --bs-info: #0dcaf0;
   --bs-warning: #ffc107;
   --bs-danger: #dc3545;
@@ -1417,7 +1417,7 @@ progress {
   --bs-table-active-bg: #bebee3;
   --bs-table-active-color: #111;
   --bs-table-hover-bg: #c3c3e9;
-  --bs-table-hover-color: #111;
+  --bs-table-hover-color: rgb(97, 155, 30);
   color: var(--bs-table-color);
   border-color: var(--bs-table-border-color); }
 

@@ -194,12 +194,13 @@ def btn_search(
         if not df.empty:
             table = dbc.Table.from_dataframe(
                 df,
-                bordered=True,
-                dark=True,
-                hover=True,
-                responsive=True,
-                striped=True,
-                className="table table-primary",
+                # bordered=True,
+                # dark=True,
+                # hover=True,
+                # responsive=True,
+                # striped=True,
+                className="table table-success table-striped \
+                    table-bordered table-hover fs-4",
             )
             return [table]
         else:
