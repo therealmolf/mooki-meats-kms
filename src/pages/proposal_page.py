@@ -30,14 +30,16 @@ know_type_input = dbc.Row(
         dbc.Col(
             dbc.DropdownMenu(
                 [
-                    dbc.DropdownMenuItem("Research"),
+                    dbc.DropdownMenuItem(
+                        "Research",
+                        className="dropdown-item"
+                    ),
                     dbc.DropdownMenuItem("Tutorial"),
                     dbc.DropdownMenuItem("News Article"),
                     dbc.DropdownMenuItem("General"),
                 ],
                 id="know-type-dropdown",
-                label="Choose Knowledge Type",
-                className="btn-success"
+                label="Choose Knowledge Type"
             ),
             width=10,
         ),
