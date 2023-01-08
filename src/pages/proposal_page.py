@@ -1,18 +1,21 @@
-# Import necessary libraries 
 from dash import html, dcc
+from dash import Output, Input, State
 import dash_bootstrap_components as dbc
+from utils import db_connect
+from dash.exceptions import PreventUpdate
+from app import app
 
 
 name_input = dbc.Row(
     [
         dbc.Label(
-            "Name", 
+            "Name",
             html_for="example-email-row", 
             width=2,
             className="form-label fw-bolder"),
         dbc.Col(
             dbc.Input(
-                type="text", 
+                type="text",
                 id="prop-by-input", 
                 placeholder="Enter your name here",
                 valid=True
@@ -28,19 +31,22 @@ know_type_input = dbc.Row(
     [
         dbc.Label("Type", html_for="example-email-row", width=2),
         dbc.Col(
-            dbc.DropdownMenu(
+            [dcc.Dropdown(
                 [
-                    dbc.DropdownMenuItem(
-                        "Research",
-                        className="dropdown-item"
-                    ),
-                    dbc.DropdownMenuItem("Tutorial"),
-                    dbc.DropdownMenuItem("News Article"),
-                    dbc.DropdownMenuItem("General"),
+                    "Research",
+                    "Tutorial",
+                    "News Article",
+                    "General"
                 ],
                 id="know-type-dropdown",
-                label="Choose Knowledge Type"
+                style={
+                    "color": "black"
+                },
+                value=""
             ),
+            html.Div(
+                id="know-type-text"
+            )],
             width=10,
         ),
     ],
@@ -87,10 +93,12 @@ emp_know_input = dbc.Row(
     [
         dbc.Label("Tag", html_for="example-email-row", width=2),
         dbc.Col(
-            dbc.Input(
-                type="text", 
-                id="emp-know-input", 
-                placeholder="Who knows about this article?"
+            dcc.Dropdown(
+                multi=True,
+                id="emp_know_input",
+                style={
+                    "color": "black"
+                }
             ),
             width=10,
         ),
@@ -105,6 +113,7 @@ prop_submit_btn = dbc.Row(
             "Submit Form",
             outline=True,
             color="light",
+            id="prop-submit-btn",
             className="btn btn-success fs-5 fw-bolder"
         )
     ],
@@ -151,3 +160,37 @@ layout = dbc.Container([
     ],
     className="container bg-black border border-dark border-5 text-white"
 )
+
+
+@app.callback(
+    [
+        Output('emp_know_input', 'options')
+    ],
+    [
+        Input('url', 'pathname')
+    ]
+)
+def populate_tag(pathname):
+    if pathname == '/proposal_page':
+        sql = """
+            SELECT emp_name
+            FROM emp
+            WHERE
+             emp_delete_ind IS NULL
+            """
+
+        df = db_connect.query_db(sql)
+
+        return [df.values.flatten()]
+
+    else:
+        raise PreventUpdate
+
+
+
+# @app.callback(
+#     Output('know-type-text', 'children'),
+#     Input('know-type-dropdown', 'value')
+# )
+# def update_knowtype_text(value):
+#     return value
