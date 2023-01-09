@@ -1,23 +1,21 @@
 import psycopg2
 import pandas as pd
+import os
 
 
-HOST = 'localhost'
-DATABASE = 'mooki_db'
-USER = 'postgres'
-PORT = 5432
-PASSWORD = 'rickyrubio17'
+# HOST = 'localhost'
+# DATABASE = 'mooki_db'
+# USER = 'postgres'
+# PORT = 5432
+# PASSWORD = 'rickyrubio17'
 
 
 def get_db_conn():
+    DATABASE_URL = os.environ['DATABASE_URL']
     conn = psycopg2.connect(
-        host=HOST,
-        database=DATABASE,
-        user=USER,
-        port=PORT,
-        password=PASSWORD
+        DATABASE_URL,
+        sslmode='require'
     )
-
     return conn
 
 
