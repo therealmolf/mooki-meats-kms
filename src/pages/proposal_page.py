@@ -139,7 +139,7 @@ layout = dbc.Container([
                         is_open=False),
                     html.P(
                         "",
-                        className="lead border-top border-success border-5 pt-5 mt-5 aos-init aos-animate"
+                        className="lead border-top border-warning border-5 pt-5 mt-5 aos-init aos-animate"
                     ),
                     html.Form(
                         [

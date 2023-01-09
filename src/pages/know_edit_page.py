@@ -5,6 +5,7 @@ from utils import db_connect
 from dash.exceptions import PreventUpdate
 from app import app
 from datetime import datetime
+from urllib.parse import urlparse, parse_qs
 
 name_input = dbc.Row(
     [
@@ -113,7 +114,7 @@ emp_know_input = dbc.Row(
 prop_submit_btn = dbc.Row(
     [
         dbc.Button(
-            "Update Form",
+            "Edit and Approve",
             outline=True,
             color="light",
             id="edit-submit-btn",
@@ -131,6 +132,15 @@ layout = dbc.Container([
             html.Div(
                 [
                     html.Br(),
+                    html.Div(
+                        [
+                            dcc.Store(
+                                id='edit_to_load',
+                                storage_type='memory',
+                                data=0
+                            )
+                        ],
+                    ),
                     html.H2(
                         "Knowledge Update Form"
                     ),
@@ -152,6 +162,35 @@ layout = dbc.Container([
                             emp_know_input
                         ],
                     ),
+                    html.Br(),
+                    html.Div(
+                dbc.Row(
+                    [dbc.Label(
+                        "Do you wish to reject instead?",
+                        color='danger',
+                        style={
+                            'fontWeight': 'bold'
+                        }
+                    ),
+                    dbc.Col(
+                        dbc.Checklist(
+                            id='reject-know',
+                            options=[
+                                {
+                                    'label': "Reject",
+                                    'value': 1
+                                }
+                            ],
+                            style={
+                                'fontWeight': 'bold',
+                            }
+                        ),
+                        width=13
+                    )],
+                    className="mb-4 fs-5 row d-flex align-items-center \
+                justify-content-center py-vh-2",
+                )
+            ),
                     prop_submit_btn
                 ],
                 className="col-12 col-lg-10 col-xl-8"
@@ -212,128 +251,193 @@ def populate_edit_tag(pathname):
         raise PreventUpdate
 
 
-# # Callback for knowledge proposal submission
-# @app.callback(
-#     Output('form-alert', 'color'),
-#     Output('form-alert', 'children'),
-#     Output('form-alert', 'is_open'),
-#     Output('form-proposal-modal', 'is_open'),
-#     Input('prop-submit-btn', 'n_clicks'),
-#     State('prop-by-input', 'value'),
-#     State('know-type-dropdown', 'value'),
-#     State('know-name-input', 'value'),
-#     State('know-desc-input', 'value'),
-#     State('emp-know-dropdown', 'value')
-# )
-# def submit_proposal(
-#     prop_submit_btn,
-#     prop_by_input,
-#     know_type_dropdown,
-#     know_name_input,
-#     know_desc_input,
-#     emp_know_dropdown
-# ):
-#     if ctx.triggered:
-#         event_id = ctx.triggered_id
-#         if event_id == 'prop-submit-btn' and prop_submit_btn:
-#             print(event_id)
 
-#             # initial alert list for open, color, text, modal
-#             alert_list = [
-#                 '',
-#                 '',
-#                 False,
-#                 False
-#                 ]
+# on submit this should also update approval
+# Callback for knowledge proposal submission
+@app.callback(
+    Output('edit-form-alert', 'color'),
+    Output('edit-form-alert', 'children'),
+    Output('edit-form-alert', 'is_open'),
+    Output('form-edit-modal', 'is_open'),
+    Input('edit-submit-btn', 'n_clicks'),
+    Input('url', 'search'),
+    State('edit-propby-input', 'value'),
+    State('edit-knowtype-dropdown', 'value'),
+    State('edit-knowname-input', 'value'),
+    State('edit-knowdesc-input', 'value'),
+    State('edit-empknow-dropdown', 'value'),
+    State('reject-know', 'value')
+)
+def submit_proposal(
+    edit_submit_btn,
+    search,
+    edit_propby_input,
+    edit_knowtype_dropdown,
+    edit_knowname_input,
+    edit_knowdesc_input,
+    edit_empknow_dropdown,
+    reject_know
+):
+    if ctx.triggered:
+        event_id = ctx.triggered_id
+        if event_id == 'edit-submit-btn' and edit_submit_btn:
+            print(event_id)
 
-#             # if missing input, this should be returned
-#             new_list = [
-#                 'danger',
-#                 'Check your inputs.',
-#                 True,
-#                 False
-#             ]
+            # initial alert list for open, color, text, modal
+            alert_list = [
+                '',
+                '',
+                False,
+                False
+                ]
 
-#             if not prop_by_input:
-#                 return new_list
-#             elif not know_type_dropdown:
-#                 return new_list
-#             elif not know_name_input:
-#                 return new_list
-#             elif not know_desc_input:
-#                 return new_list
-#             elif not emp_know_dropdown:
-#                 return new_list
-#             else:
-#                 print("All inputs work!")
+            # if missing input, this should be returned
+            new_list = [
+                'danger',
+                'Check your inputs.',
+                True,
+                False
+            ]
 
-#                 prop_date = datetime.now()
+            app_status = "Approved"
 
-#                 sql = f"""
-#                     INSERT INTO knowledge
-#                     (
-#                         know_type,
-#                         know_name,
-#                         know_desc,
-#                         prop_date,
-#                         prop_by,
-#                         app_status
-#                     )
-#                     VALUES
-#                     (
-#                         '{know_type_dropdown}',
-#                         '{know_name_input}',
-#                         '{know_desc_input}',
-#                         '{prop_date}',
-#                         '{prop_by_input}',
-#                         'Waiting'
-#                         )"""
+            if reject_know:
+                reject_bool = True
+                app_status = "Rejected"
 
-#                 print(sql)
-#                 db_connect.modify_db(sql)
+            if not edit_propby_input:
+                return new_list
+            elif not edit_knowtype_dropdown:
+                return new_list
+            elif not edit_knowname_input:
+                return new_list
+            elif not edit_knowdesc_input:
+                return new_list
+            elif not edit_empknow_dropdown:
+                return new_list
+            else:
+                print("All inputs work!")
 
-#                 # Need to update emp know
-#                 print(emp_know_dropdown)
-#                 # For each value here
-#                 for name in emp_know_dropdown:
-#                     sql = f"""
-#                         SELECT emp_id
-#                         FROM emp
-#                         WHERE
-#                         emp_name = '{name}'
-#                     """
-#                     emp_id = db_connect.query_db(sql).values[0][0]
+                print(reject_know)
 
-#                     sql = f"""
-#                         SELECT know_id
-#                         FROM knowledge
-#                         WHERE
-#                         know_name = '{know_name_input}'
-#                     """
 
-#                     know_id = db_connect.query_db(sql).values[0][0]
+                parsed = urlparse(search)
+                current_know_id = parse_qs(parsed.query)['id'][0]
 
-#                     sql = f"""
-#                         INSERT INTO emp_know
-#                         (
-#                             emp_id,
-#                             know_id
-#                         )
-#                         VALUES
-#                         (
-#                             '{emp_id}',
-#                             '{know_id}'
-#                         )
-#                     """
+                sql = f"""
+                    UPDATE knowledge
+                    SET
+                    know_type = '{edit_knowtype_dropdown}',
+                    know_name = '{edit_knowname_input}',
+                    know_desc = '{edit_knowdesc_input}',
+                    prop_by = '{edit_propby_input}',
+                    app_status = '{app_status}',
+                    know_delete_ind = '{reject_bool}'
+                    WHERE
+                        know_id = {current_know_id}
+                    """
 
-#                     db_connect.modify_db(sql)
+                print(sql)
+                db_connect.modify_db(sql)
+                  
+                sql = f"""
+                    DELETE FROM
+                    emp_know
+                    WHERE
+                    know_id = {current_know_id}
+                """
 
-#                     print(f"{emp_id} , {know_id}")
+                db_connect.modify_db(sql)
 
-#                 alert_list[3] = True
+                # Need to update emp know
+                print(edit_empknow_dropdown)
+                # For each value here
+                for name in edit_empknow_dropdown:
+                    sql = f"""
+                        SELECT emp_id
+                        FROM emp
+                        WHERE
+                        emp_name = '{name}'
+                    """
+                    emp_id = db_connect.query_db(sql).values[0][0]
 
-#                 return alert_list
-#         else:
-#             raise PreventUpdate
-#     else:
-#         raise PreventUpdate
+                    sql = f"""
+                        INSERT INTO emp_know
+                        (
+                            emp_id,
+                            know_id
+                        )
+                        VALUES
+                        (
+                            '{emp_id}',
+                            '{current_know_id}'
+                        )
+                    """
+
+                    db_connect.modify_db(sql)
+
+                    print(f"{emp_id} , {current_know_id}")
+
+                alert_list[3] = True
+
+                return alert_list
+        else:
+            raise PreventUpdate
+    else:
+        raise PreventUpdate
+
+
+@app.callback(
+    Output('edit-propby-input', 'value'),
+    Output('edit-knowtype-dropdown', 'value'),
+    Output('edit-knowname-input', 'value'),
+    Output('edit-knowdesc-input', 'value'),
+    Output('edit-empknow-dropdown', 'value'),
+    Input('url', 'search')
+)
+def load_edit_data(search):
+    if search:
+        parsed = urlparse(search)
+        current_id = parse_qs(parsed.query)['id'][0]
+
+        sql = f"""
+            SELECT
+                know_type,
+                know_name,
+                know_desc,
+                prop_by
+            FROM
+                knowledge
+            WHERE
+                know_id = {current_id}
+        
+        """
+
+        know_list = db_connect.query_db(sql).values.flatten()
+
+        sql = f"""
+            SELECT
+                emp_id
+            FROM
+                emp_know
+            WHERE
+                know_id = {current_id}
+        """
+
+        emp_id_list = db_connect.query_db(sql).values.flatten()
+        emp_name_list = []
+
+        for emp_val in emp_id_list:
+            sql = f"""
+                SELECT
+                    emp_name
+                FROM
+                    emp
+                WHERE
+                    emp_id = {emp_val}
+            """
+            emp_name_list.append(db_connect.query_db(sql)[0][0])
+        
+        return know_list[3], know_list[0], know_list[1], know_list[2], emp_name_list
+    else:
+        raise PreventUpdate

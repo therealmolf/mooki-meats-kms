@@ -140,6 +140,7 @@ layout = dbc.Container([
     "
 )
 
+# TODO: Fix approval and rejection buttons
 
 @app.callback(
     Output("approve-table", "children")
@@ -192,22 +193,11 @@ def load_approve_table(pathname,
                         dbc.ButtonGroup(
                             [
                                 dbc.Button(
-                                    "Approve",
-                                    # outline=True,
-                                    color="success",
-                                    href='#approve-modal',
-                                    id=f"approve-btn-{id}"
-                                    ),
-                                dbc.Button(
-                                    "Reject",
-                                    # outline=True,
-                                    color="danger",
-                                    id=f"reject-btn-{id}"),
-                                dbc.Button(
-                                    "Edit",
+                                    "Edit, Approve, or Reject",
                                     # outline=True,
                                     color="warning",
-                                    id="approve-edit-btn"),
+                                    href=f"/approve_page/know_edit_page?id={id}",
+                                    id="approve-edit-btn",)
                             ],
                         )
                     )
@@ -226,36 +216,3 @@ def load_approve_table(pathname,
             return ["No records to display"]
     else:
         raise PreventUpdate
-
-
-# # callback for approve, reject, edit
-# @app.callback(
-#     Output('approve-modal', 'is_open'),
-#     Output('approve-modal-body', 'children'),
-#     Input('approve-btn-39', 'n_clicks'),
-#     Input('reject-btn-39', 'n_clicks'),
-#     Input('approve-modal-btn', 'n_clicks')
-# )
-# def approval_action(
-#     approve_btn,
-#     reject_btn,
-#     approve_modal_btn
-# ):
-#     if ctx.triggered:
-
-#         event_id = ctx.triggered_id
-
-#         if event_id == 'approve-btn' and approve_btn:
-#             print(event_id)
-#             modal_val = True
-#             modal_text = 'Are you sure you want to approve?'
-#             return [modal_val, modal_text]
-
-#         elif event_id == 'reject-btn' and reject_btn:
-#             print(event_id)
-#             modal_val = True
-#             modal_text = 'Are you sure you want to reject?'
-#             return [modal_val, modal_text]
-            
-#         else:
-#             raise PreventUpdate

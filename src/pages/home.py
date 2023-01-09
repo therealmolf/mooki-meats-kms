@@ -158,7 +158,13 @@ def btn_search(
                     date_hired,
                     know_name
                     )) @@ 
-            plainto_tsquery('{search_input}');
+            plainto_tsquery('{search_input}')
+            AND
+                app_status = 'Approved'
+            AND
+                know_delete_ind IS NULL
+            AND 
+                emp_delete_ind IS NULL
             """
         cols = [
             "Employee",
@@ -189,6 +195,10 @@ def btn_search(
         if not df.empty:
             table = dbc.Table.from_dataframe(
                 df,
+                style={
+                    'whiteSpace': 'normal',
+                    'height': 'auto',
+                },
                 className="table table-secondary table-striped \
                     table-bordered table-hover fs-4",
             )
