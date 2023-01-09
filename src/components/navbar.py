@@ -9,14 +9,25 @@ def Navbar():
     layout = html.Div([
         dbc.Navbar(
             children=[
-                html.A([
-                    html.Span("Mooki Meats",
-                              className="ms-md-1 mt-1 fw-bolder me-md-5",
-                              style={
-                                    "color": "#224B0C",
-                              }
-                              ),
-                ],
+                html.A(
+                    [
+                    html.Img(
+                        src=r"/assets/logos/leaf logo.svg",
+                        alt="image",
+                        style={
+                            "background-color": "#224B0C",
+                            },
+                        width="25",
+                        height="25"
+                        ),
+                    html.Span(
+                        "Mooki Meats",
+                        className="ms-md-1 mt-1 fw-bolder me-md-5",
+                        style={
+                            "color": "#224B0C",
+                            }
+                    ),
+                    ],
                     className="navbar-brand pe-md-4 fs-4 col-12 \
                         col-md-auto text-center",
                     href="/home",

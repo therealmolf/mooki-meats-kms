@@ -1,5 +1,5 @@
 # Import necessary libraries 
-from dash import html
+from dash import html, ctx
 from dash import Input, Output, State
 import dash_bootstrap_components as dbc
 from dash import dcc
@@ -44,7 +44,8 @@ check_row = dbc.Row(
                                 'General'
                             ],
                             # inline=True,
-                            className='col-sm-2'
+                            className='col-sm-2',
+                            id='approve-checklist'
                         ),
             width=10,
         ),
@@ -102,13 +103,24 @@ layout = dbc.Container([
                         html.H4('Are you sure?')
                     ),
                     dbc.ModalBody(
-                        'Do you want to make these changes?'
+                        'Do you want to make these changes?',
+                        id='approve-modal-body'
                     ),
                     dbc.ModalFooter(
-                        dbc.Button(
-                            "Yes",
-                            href='/home'
+                        dbc.Row(
+                            [
+                                dbc.Button(
+                                    "Yes",
+                                    href='/approve_page',
+                                    id='approve-modal-btn'
+                                ),
+                                dbc.Button(
+                                    "No",
+                                    href="/approve_page"
+                                )
+                            ]
                         )
+                        
                     )
                 ],
                 centered=True,
@@ -123,7 +135,9 @@ layout = dbc.Container([
         className="row d-flex align-items-start justify-content-center py-vh-3 text-muted aos-init"
     )
     ],
-    className="container bg-black border border-dark border-5 text-white"
+    className="container bg-black border border-dark border-5 text-white\
+    w-100 overflow-hidden position-relative \
+    "
 )
 
 
@@ -131,9 +145,12 @@ layout = dbc.Container([
     Output("approve-table", "children")
     ,
     Input("url", "pathname"),
-    Input('approve-search', 'value')
+    Input('approve-search', 'value'),
+    Input('approve-checklist', 'value')
 )
-def moviehome_loadmovielist(pathname, approve_term):
+def load_approve_table(pathname, 
+                    approve_term,
+                    approve_checklist):
     if pathname == '/approve_page':
         sql = """
             SELECT 
@@ -156,17 +173,88 @@ def moviehome_loadmovielist(pathname, approve_term):
      
         if approve_term:
             sql += f"AND know_name ILIKE '%{approve_term}%'"
+        
+        if approve_checklist:
+            for i, approve_type in enumerate(approve_checklist):
+                if i == 0:
+                    sql += f"AND know_type = '{approve_type}'"
+                else:
+                    sql += f"OR know_type = '{approve_type}'"
 
         df = db_connect.query_db(sql, df_col=cols)
 
+        # Add buttons 
         if not df.empty:
+            buttons = []
+            for id in df['ID']:
+                buttons.append(
+                    html.Div(
+                        dbc.ButtonGroup(
+                            [
+                                dbc.Button(
+                                    "Approve",
+                                    # outline=True,
+                                    color="success",
+                                    id="approve-btn"
+                                    ),
+                                dbc.Button(
+                                    "Reject",
+                                    # outline=True,
+                                    color="danger",
+                                    id="reject-btn"),
+                                dbc.Button(
+                                    "Edit",
+                                    # outline=True,
+                                    color="warning",
+                                    id="approve-edit-btn"),
+                            ],
+                        )
+                    )
+                )
+
+            df['Action'] = buttons
+            df.drop('ID', axis=1, inplace=True)
+
             table = dbc.Table.from_dataframe(
                 df,
                 className="table table-secondary table-striped \
-                    table-bordered table-hover fs-4",
+                    table-bordered table-hover fs-5",
             )
             return [table]
         else:
             return ["No records to display"]
     else:
         raise PreventUpdate
+
+
+# callback for approve, reject, edit
+@app.callback(
+    Output('approve-modal', 'is_open'),
+    Output('approve-modal-body', 'children'),
+    Input('approve-btn', 'n_clicks'),
+    Input('reject-btn', 'n_clicks'),
+    Input('approve-modal-btn', 'n_clicks')
+)
+def approval_action(
+    approve_btn,
+    reject_btn,
+    approve_modal_btn
+):
+    if ctx.triggered:
+
+        event_id = ctx.triggered_id
+
+        if event_id == 'approve-btn' and approve_btn:
+            print(event_id)
+            modal_val = True
+            modal_text = 'Are you sure you want to approve?'
+            return [modal_val, modal_text]
+
+        elif event_id == 'reject-btn' and reject_btn:
+            print(event_id)
+            modal_val = True
+            modal_text = 'Are you sure you want to reject?'
+            return [modal_val, modal_text]
+            
+        else:
+            raise PreventUpdate
