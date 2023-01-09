@@ -125,7 +125,7 @@ layout = dbc.Container([
                 ],
                 centered=True,
                 id='approve-modal',
-                backdrop='static'
+                backdrop='static',
             )
         ],
         className="row d-flex justify-content-center py-vh-5 pb-0"
@@ -195,13 +195,14 @@ def load_approve_table(pathname,
                                     "Approve",
                                     # outline=True,
                                     color="success",
-                                    id="approve-btn"
+                                    href='#approve-modal',
+                                    id=f"approve-btn-{id}"
                                     ),
                                 dbc.Button(
                                     "Reject",
                                     # outline=True,
                                     color="danger",
-                                    id="reject-btn"),
+                                    id=f"reject-btn-{id}"),
                                 dbc.Button(
                                     "Edit",
                                     # outline=True,
@@ -227,34 +228,34 @@ def load_approve_table(pathname,
         raise PreventUpdate
 
 
-# callback for approve, reject, edit
-@app.callback(
-    Output('approve-modal', 'is_open'),
-    Output('approve-modal-body', 'children'),
-    Input('approve-btn', 'n_clicks'),
-    Input('reject-btn', 'n_clicks'),
-    Input('approve-modal-btn', 'n_clicks')
-)
-def approval_action(
-    approve_btn,
-    reject_btn,
-    approve_modal_btn
-):
-    if ctx.triggered:
+# # callback for approve, reject, edit
+# @app.callback(
+#     Output('approve-modal', 'is_open'),
+#     Output('approve-modal-body', 'children'),
+#     Input('approve-btn-39', 'n_clicks'),
+#     Input('reject-btn-39', 'n_clicks'),
+#     Input('approve-modal-btn', 'n_clicks')
+# )
+# def approval_action(
+#     approve_btn,
+#     reject_btn,
+#     approve_modal_btn
+# ):
+#     if ctx.triggered:
 
-        event_id = ctx.triggered_id
+#         event_id = ctx.triggered_id
 
-        if event_id == 'approve-btn' and approve_btn:
-            print(event_id)
-            modal_val = True
-            modal_text = 'Are you sure you want to approve?'
-            return [modal_val, modal_text]
+#         if event_id == 'approve-btn' and approve_btn:
+#             print(event_id)
+#             modal_val = True
+#             modal_text = 'Are you sure you want to approve?'
+#             return [modal_val, modal_text]
 
-        elif event_id == 'reject-btn' and reject_btn:
-            print(event_id)
-            modal_val = True
-            modal_text = 'Are you sure you want to reject?'
-            return [modal_val, modal_text]
+#         elif event_id == 'reject-btn' and reject_btn:
+#             print(event_id)
+#             modal_val = True
+#             modal_text = 'Are you sure you want to reject?'
+#             return [modal_val, modal_text]
             
-        else:
-            raise PreventUpdate
+#         else:
+#             raise PreventUpdate

@@ -6,7 +6,7 @@ from dash.dependencies import Input, Output
 from app import app
 
 # Connect to your app pages
-from pages import home, about_page, proposal_page, approve_page, update_page
+from pages import home, about_page, proposal_page, approve_page, know_edit_page
 
 # Connect the navbar to the index
 from components import navbar
@@ -38,6 +38,8 @@ def display_page(pathname):
         return update_page.layout
     if pathname == '/approve_page':
         return approve_page.layout
+    if pathname == '/approve_page/know_edit_page':
+        return know_edit_page.layout
     else:
         # if redirected to unknown link
         return "404 Page Error! Please choose a link"
