@@ -6,13 +6,18 @@ from dash.dependencies import Input, Output
 from app import app
 
 # Connect to your app pages
-from pages import home, about_page, proposal_page, approve_page, know_edit_page, update_page, up_edit_page
+from pages import home, about_page, proposal_page, approve_page
+from pages import know_edit_page, update_page, up_edit_page
 
 # Connect the navbar to the index
 from components import navbar
 
 # Define the navbar
 nav = navbar.Navbar()
+
+
+server = app.server
+
 
 # Define the index page layout
 app.layout = html.Div([
