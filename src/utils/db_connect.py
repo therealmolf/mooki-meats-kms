@@ -2,10 +2,11 @@ import psycopg2
 import pandas as pd
 import os
 
-LOCAL_HOST = "localhost"
-LOCAL_DB = "mooki_db"
-LOCAL_USER = "postgres"
-LOCAL_PASSWORD = "rickyrubio17"
+# LOCAL_HOST = "localhost"
+# LOCAL_DB = "mooki_db"
+# LOCAL_USER = "postgres"
+# LOCAL_PASSWORD = "rickyrubio17"
+# PORT = 5432
 
 
 def get_db_conn():
