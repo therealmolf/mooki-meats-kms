@@ -17,7 +17,7 @@ def get_db_conn():
         # port=PORT,
         # password=LOCAL_PASSWORD
         DATABASE_URL,
-        # sslmode='require'
+        sslmode='require'
     )
     return conn
 
