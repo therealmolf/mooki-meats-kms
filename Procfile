@@ -1,1 +1,1 @@
-web: gunicorn index:server --preload
+web: gunicorn src/index.py:server --preload
