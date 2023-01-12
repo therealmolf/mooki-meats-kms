@@ -7,7 +7,7 @@ from app import app
 
 # Connect to your app pages
 from pages import home, about_page, proposal_page, approve_page
-from pages import know_edit_page, update_page, up_edit_page
+from pages import know_edit_page, update_page, up_edit_page, reports_page
 
 # Connect the navbar to the index
 from components import navbar
@@ -41,6 +41,8 @@ def display_page(pathname):
         return proposal_page.layout
     if pathname == '/update_page':
         return update_page.layout
+    if pathname == '/reports_page':
+        return reports_page.layout
     if pathname == '/approve_page':
         return approve_page.layout
     if pathname == '/approve_page/know_edit_page':

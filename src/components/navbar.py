@@ -45,6 +45,13 @@ def Navbar():
                     ),
                     dbc.NavItem(
                         dbc.NavLink(
+                            "Reports",
+                            href="/reports_page",
+                            className="nav-link fs-5"),
+                        className="nav-item"
+                    ),
+                    dbc.NavItem(
+                        dbc.NavLink(
                             "Update",
                             href="/update_page",
                             className="nav-link fs-5"),

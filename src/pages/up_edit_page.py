@@ -114,7 +114,10 @@ deg_input = dbc.Row(
 
 content_input = dbc.Row(
     [
-        dbc.Label("Employee Description", html_for="example-email-row", width=2),
+        dbc.Label(
+            "Employee Description",
+            html_for="example-email-row",
+            width=2),
         dbc.Col(
             dbc.Textarea(
                 id="update-empdesc-input",
@@ -143,7 +146,8 @@ emp_submit_btn = dbc.Row(
             className="btn btn-success fs-5 fw-bolder"
         )
     ],
-    className="mb-5 col-13 align-items-center border-top border-4 border-dark pt-5 mt-5",
+    className="mb-5 col-13 align-items-center border-top \
+        border-4 border-dark pt-5 mt-5",
 )
 
 
@@ -176,32 +180,36 @@ layout = dbc.Container([
                             content_input,
                         ],
                     ),
-                    dbc.Row(
-                    [dbc.Label(
-                        "Do you wish to remove this employee instead?",
-                        color='danger',
-                        style={
-                            'fontWeight': 'bold'
-                        }
-                    ),
-                    dbc.Col(
-                        dbc.Checklist(
-                            id='reject-emp',
-                            options=[
-                                {
-                                    'label': "Remove",
-                                    'value': 1
-                                }
-                            ],
-                            style={
-                                'fontWeight': 'bold',
-                            }
-                        ),
-                        width=13
-                    )],
-                    className="mb-4 fs-5 row d-flex align-items-center \
-                justify-content-center py-vh-2",
-                ),
+                    html.Div(
+                        [
+                            dbc.Label(
+                                "Do you wish to remove this employee instead?",
+                                color='danger',
+                                style={
+                                    'fontWeight': 'bold'
+                                },
+                                className="mb-4 fs-5"
+                            ),
+                            dbc.Col(
+                                dbc.Checklist(
+                                    id='reject-emp',
+                                    options=[
+                                        {
+                                            'label': "Remove",
+                                            'value': 1
+                                        }
+                                    ],
+                                    style={
+                                        'fontWeight': 'bold',
+                                    }
+                                    ),
+                                width=13
+                            )
+                        ],
+                        # className="mb-4 fs-5 row d-flex align-items-center \
+                        #     justify-content-center py-vh-2",
+                        id='reject-row'
+                                ),
                     emp_submit_btn
                 ],
                 className="col-12 col-lg-10 col-xl-8"
@@ -288,9 +296,6 @@ def submit_proposal(
                 False
             ]
 
-            if reject_emp:
-                reject_bool = True
-
             if not update_empname_input:
                 return new_list
             elif not update_team_dropdown:
@@ -340,7 +345,7 @@ def submit_proposal(
 
                     alert_list[3] = True
                     return alert_list
-                
+
                 elif mode == 'edit':
                     parsed = urlparse(search)
                     current_id = parse_qs(parsed.query)['id'][0]
@@ -353,12 +358,24 @@ def submit_proposal(
                             role_name = '{update_role_input}',
                             ssn = '{update_ssn_input}',
                             degree = '{update_deg_input}',
-                            emp_desc = '{update_empdesc_input}',
-                            emp_delete_ind = '{reject_bool}'
-                        WHERE
-                        emp_id = {current_id}
+                            emp_desc = '{update_empdesc_input}'
+                            """
 
-                    """
+                    if reject_emp:
+                        reject_bool = True
+
+                        sql += f"""
+                                ,
+                                emp_delete_ind = '{reject_bool}'
+                            WHERE
+                                emp_id = {current_id}
+
+                        """
+                    else:
+                        sql += f"""
+                            WHERE
+                                emp_id = {current_id}
+                        """
 
                     db_connect.modify_db(sql)
 
@@ -378,18 +395,21 @@ def submit_proposal(
     Output('update-ssn-input', 'value'),
     Output('update-deg-input', 'value'),
     Output('update-empdesc-input', 'value'),
+    Output('reject-row', 'style'),
     Input('url', 'pathname'),
     State('url', 'search')
 )
-def load_edit_data(
-    pathname,
-    search):
+def load_edit_data(pathname, search):
 
     if pathname == '/update_page/up_edit_page':
         parsed = urlparse(search)
         mode = parse_qs(parsed.query)['mode'][0]
+        print(mode)
 
-    if pathname == '/update_page/up_edit_page' and mode == 'edit':
+    if pathname == '/update_page/up_edit_page' and mode == 'add':
+        return "", "", "", "", "", "", {'display': 'none'}
+
+    elif pathname == '/update_page/up_edit_page' and mode == 'edit':
         parsed = urlparse(search)
         current_id = parse_qs(parsed.query)['id'][0]
 
@@ -404,13 +424,12 @@ def load_edit_data(
             FROM
                 emp
             WHERE
-                emp_id = {current_id}
-        
+                emp_id = {current_id}    
         """
 
         emp_list = db_connect.query_db(sql).values.flatten()
         print(emp_list)
-        
-        return emp_list[0], emp_list[1], emp_list[2], emp_list[3], emp_list[4], emp_list[5]
+   
+        return emp_list[0], emp_list[1], emp_list[2], emp_list[3], emp_list[4], emp_list[5], {'display': 'block'}
     else:
         raise PreventUpdate
