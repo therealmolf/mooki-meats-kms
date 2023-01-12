@@ -301,10 +301,6 @@ def submit_proposal(
 
             app_status = "Approved"
 
-            if reject_know:
-                reject_bool = True
-                app_status = "Rejected"
-
             if not edit_propby_input:
                 return new_list
             elif not edit_knowtype_dropdown:
@@ -317,9 +313,7 @@ def submit_proposal(
                 return new_list
             else:
                 print("All inputs work!")
-
-                print(reject_know)
-
+                print(f"Is rejected: {reject_know}")
 
                 parsed = urlparse(search)
                 current_know_id = parse_qs(parsed.query)['id'][0]
@@ -330,12 +324,28 @@ def submit_proposal(
                     know_type = '{edit_knowtype_dropdown}',
                     know_name = '{edit_knowname_input}',
                     know_desc = '{edit_knowdesc_input}',
-                    prop_by = '{edit_propby_input}',
-                    app_status = '{app_status}',
-                    know_delete_ind = '{reject_bool}'
-                    WHERE
-                        know_id = {current_know_id}
+                    prop_by = '{edit_propby_input}'
+                """
+                
+                if reject_know:
+                    app_status = "Rejected"
+                    reject_bool = True
+
+                    sql += f"""
+                        ,
+                        app_status = '{app_status}',
+                        know_delete_ind = '{reject_bool}'
+                        WHERE
+                            know_id = {current_know_id}
                     """
+                else:
+                    sql += f"""
+                        ,
+                        app_status = '{app_status}'
+                        WHERE
+                            know_id = {current_know_id}
+                    """
+                    print(sql)
 
                 print(sql)
                 db_connect.modify_db(sql)
