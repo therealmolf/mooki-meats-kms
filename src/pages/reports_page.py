@@ -57,6 +57,11 @@ layout = html.Div([
                 dbc.ButtonGroup(
                     [
                         dbc.Button(
+                            "Team",
+                            outline=True,
+                            color="light",
+                            id="team-report-btn"),
+                        dbc.Button(
                             "Employee",
                             outline=True,
                             color="light",
@@ -75,6 +80,48 @@ layout = html.Div([
         ],
         className="container py-vh-4 position-relative mt-5 \
             px-vw-5 text-center"
-    )],
+        ),
+    html.Div(
+        html.Div(
+            html.Div(
+                [
+                    html.Div(
+                        [
+                            html.Div(),
+                            html.Div(
+                                "This is the knowledge text box",
+                                className="col-12 col-lg-10 col-xl-8 text-center my-5"
+                            )
+                        ],
+                        style={
+                            "background-color": "#224B0C",
+                                },
+                        className="col-6 d-flex align-items-center rounded-5 p-0 aos-init aos-animate"
+                    ),
+                    html.Div(
+                        [
+                            html.Span(
+                                "The numbers",
+                                className="h5 text-secondary fw-lighter"
+                            ),
+                            html.H2(
+                                "Value",
+                                className="display-huge fw-bolder aos-init aos-animate"
+                            ),
+                            html.P(
+                                "This is a sample paragraph",
+                                className="h4 fw-lighter text-secondary"
+                            )
+                        ],
+                        className="col-5 offset-1"
+                    )
+                ],
+                className="row d-flex align-items-center"
+            ),
+            className="container bg-dark px-vw-5 py-vh-3 rounded-5 shadow"
+        ),
+        className="position-relative py-vh-5 bg-cover bg-center rounded-5"
+    )
+    ],
     className="text-white"
     )
