@@ -130,17 +130,14 @@ layout = dbc.Container([
 
 
 @app.callback(
-    Output("update-table", "children")
-    ,
+    Output("update-table", "children"),
     Input("url", "pathname"),
     Input('update-search', 'value'),
 )
-def load_approve_table(pathname, 
-                    update_term,
-                    ):
+def load_approve_table(pathname, update_term,):
     if pathname == '/update_page':
         sql = """
-            SELECT 
+            SELECT
                 emp_id,
                 emp_name,
                 team_name,
