@@ -1,1 +1,1 @@
-web: gunicorn src.index:server --preload
+web: gunicorn --chdir src index:server --preload
