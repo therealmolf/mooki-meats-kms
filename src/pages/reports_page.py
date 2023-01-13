@@ -6,6 +6,45 @@ from dash import Input, Output
 from utils import db_connect
 from app import app
 
+
+knowledge_report = html.Div(
+    [html.Div(
+        [
+            html.Div(),
+            html.Div(
+                "This is the knowledge text box",
+                className="col-12 col-lg-10 col-xl-8 text-center my-5"
+                )
+        ],
+        style={
+            "background-color": "#224B0C",
+            },
+            className="col-6 d-flex align-items-center shadow rounded-5 p-0 aos-init aos-animate"
+        ),
+    html.Div(
+        [
+            html.Span(
+                "The numbers",
+                className="h5 text-secondary fw-lighter"
+                ),
+            html.H2(
+                "Value",
+                className="display-huge fw-bolder aos-init aos-animate"
+                ),
+            html.P(
+                "This is a sample paragraph",
+                className="h4 fw-lighter text-secondary"
+                )
+        ],
+        className="col-5 offset-1"
+        )
+    ],
+    className="row d-flex align-items-center"
+    )
+
+
+
+
 # Define the page layout
 layout = html.Div([
     html.Div(
@@ -38,29 +77,8 @@ layout = html.Div([
                     ],
                     className="col-12 col-xl-10"
                 ),
-                html.Div(
-                    [
-                        html.Br(),
-                        dbc.Col(
-                            dbc.Input(
-                                id="search-input",
-                                placeholder="Type something...", 
-                                type="text",
-                                valid=True,
-                            ),
-                            width=30
-                        ),
-                        html.P(id="output"),
-                    ],
-                    className="col-12 col-xl-13"
-                ),
                 dbc.ButtonGroup(
                     [
-                        dbc.Button(
-                            "Team",
-                            outline=True,
-                            color="light",
-                            id="team-report-btn"),
                         dbc.Button(
                             "Employee",
                             outline=True,
@@ -72,6 +90,7 @@ layout = html.Div([
                             color="light",
                             id="know-report-btn"),
                     ],
+                    className="py-vh-3"
                 )
               ],
               className="row d-flex align-items-center \
@@ -86,42 +105,62 @@ layout = html.Div([
             html.Div(
                 [
                     html.Div(
-                        [
-                            html.Div(),
-                            html.Div(
-                                "This is the knowledge text box",
-                                className="col-12 col-lg-10 col-xl-8 text-center my-5"
-                            )
-                        ],
-                        style={
-                            "background-color": "#224B0C",
-                                },
-                        className="col-6 d-flex align-items-center rounded-5 p-0 aos-init aos-animate"
+                        dbc.Row(
+                            [
+                                html.Div(
+                                    "Click the buttons above to show the reports!",
+                                    id="reports-title",
+                                    className="h3 fw-bolder aos-init aos-animate"
+                                ),
+                                html.Div(
+                                    id="reports-date",
+                                    className="h4 fw-lighter text-secondary"
+                                )
+                            ]
+                        ),
+                        className="border-bottom py-vh-1"
                     ),
                     html.Div(
-                        [
-                            html.Span(
-                                "The numbers",
-                                className="h5 text-secondary fw-lighter"
-                            ),
-                            html.H2(
-                                "Value",
-                                className="display-huge fw-bolder aos-init aos-animate"
-                            ),
-                            html.P(
-                                "This is a sample paragraph",
-                                className="h4 fw-lighter text-secondary"
-                            )
-                        ],
-                        className="col-5 offset-1"
+                        id="reports-load-page"
                     )
                 ],
-                className="row d-flex align-items-center"
             ),
-            className="container bg-dark px-vw-5 py-vh-3 rounded-5 shadow"
+            className="container bg-dark px-vw-5 py-vh-4 rounded-5 shadow"
         ),
-        className="position-relative py-vh-5 bg-cover bg-center rounded-5"
-    )
+        className="position-relative py-vh-1 bg-cover bg-center rounded-5"
+    ),
+    html.Div(
+        className="bg-black py-vh-3"
+        )
     ],
     className="text-white"
     )
+
+
+# callback for loading front page and button
+@app.callback(
+    Output("reports-load-page", "children"),
+    Output("reports-title", "children"),
+    Output("reports-date", "children"),
+    Input("emp-report-btn", "n_clicks"),
+    Input("know-report-btn", "n_clicks")
+)
+def report_submit(
+    emp_report_btn,
+    know_report_btn
+):
+    if ctx.triggered:
+            event_id = ctx.triggered_id
+            print(event_id)
+    else:
+        raise PreventUpdate
+        
+    if event_id == 'know-report-btn':
+        return [knowledge_report], "Knowledge Report", "Results as of"
+    elif event_id == "emp-report-btn":
+        return ["No Report to Display"], "No Report", "Results as of"
+
+
+# call back for loading each report page 
+# Input page url
+# Output to all fields
