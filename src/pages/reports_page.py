@@ -171,6 +171,105 @@ knowledge_report = html.Div(
     )
 
 
+emp_report = html.Div(
+    [
+        html.H4(
+            "Total Employees",
+            className="border-bottom fw-bolder py-vh-1",
+        ),
+        # VALUE FORMAT
+        # --------------------------------------------
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.Span(
+                            "The numbers",
+                            className="h5 text-secondary fw-lighter"
+                            ),
+                        html.Div(
+                            id="total-emp-value",
+                            className="display-huge fw-bolder aos-init aos-animate"
+                            ),
+                        html.P(
+                            "Total number of Employees",
+                            className="h4 fw-lighter text-secondary"
+                            )
+                    ],
+                    className="col-5 offset-1"
+                ),
+            ],
+            className="row align-items-center"
+        ),
+        # --------------------------------------------
+        
+        html.H4(
+            "Most and Least Knowledgeable",
+            className="border-bottom fw-bolder py-vh-1"
+        ),
+
+        # VALUE FORMAT
+        # --------------------------------------------
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.Div(
+                            id="most-know-tag",
+                            className="h3 fw-bolder aos-init aos-animate"
+                            ),
+                        html.P(
+                            "Top 5 Employees that have the most Knowledge tags",
+                            className="h4 fw-lighter text-secondary"
+                            )
+                    ],
+                    className="col-5 offset-1"
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            id="least-know-tag",
+                            className="h3 fw-bolder aos-init aos-animate"
+                            ),
+                        html.P(
+                            "Top 5 Employees that have the least Knowledge tags",
+                            className="h4 fw-lighter text-secondary"
+                            )
+                    ],
+                    className="col-5 offset-1"
+                ),
+            ],
+            className="row align-items-center"
+        ),
+        # --------------------------------------------
+
+        # TABLE FORMAT
+        # --------------------------------------------
+        html.H4(
+            "Yearly Hires in the last Five Years",
+            className="border-bottom fw-bolder py-vh-1"
+        ),
+        html.Br(),
+        html.Div(
+            [
+            html.Br(),
+            html.Div(
+                id="hire-value",
+                className="col-12 col-lg-10 col-xl-8 text-center my-5 py-vh-1"
+                )
+            ],
+            style={
+                "background-color": "#224B0C",
+                },
+            className="row d-flex align-items-center justify-content-center shadow rounded-5"
+           ),
+        # ----------------------------------------------
+
+    ],
+    className="col align-items-center justify-content-center"
+    )
+
+
 # Define the page layout
 layout = html.Div([
     html.Div(
@@ -297,7 +396,7 @@ def report_submit(
 
     elif event_id == "emp-report-btn":
         output = [
-            ["No Report to Display yet"],
+            [emp_report],
             "Employee Report",
             date_text
         ]
@@ -314,7 +413,7 @@ def report_submit(
         Output("most-know-value", "children"),
         Output("least-know-value", "children"),
         Output("prop-freq-value", "children"),
-        Output("word-cloud-value", "children")
+        Output("word-cloud-value", "children"),
     ],
     [
         Input("url", "pathname")
@@ -429,3 +528,98 @@ def load_reports(
 
 # Input page url
 # Output to all fields
+@app.callback(
+    [
+        Output('total-emp-value', 'children'),
+        Output('most-know-tag', 'children'),
+        Output('least-know-tag', 'children'),
+        Output('hire-value', 'children')
+    ],
+    [
+        Input("url", "pathname")
+    ]
+)
+def load_emp_reports(
+    pathname
+):
+    if pathname == '/reports_page':
+
+        output_list = []
+        # append total employee
+        sql = """
+            SELECT
+                COUNT(*)
+            FROM
+                emp
+            WHERE
+                emp_delete_ind IS NULL
+        """
+
+        output_list.append(db_connect.query_db(sql)[0][0])
+
+        # append most and least knowledgeable
+        sql = """
+
+            SELECT t.emp_id, e.emp_name, t.ck
+            FROM
+                (SELECT
+                    emp_id,
+                    COUNT(know_id) as ck
+                FROM
+                    emp_know
+                GROUP BY
+                    emp_id
+                ORDER BY
+                    ck) t
+            INNER JOIN
+                emp e
+            on
+                e.emp_id = t.emp_id
+            WHERE
+                emp_delete_ind IS NULL
+        """
+        col = ['emp_id', 'emp_name', 'know_count']
+        df = db_connect.query_db(sql, df_col=col)
+
+        # reversing using a slice technique
+        most_know = df.iloc[-5:, 1].to_list()[::-1]
+        for i, val in enumerate(most_know):
+            num = i + 1
+            most_know[i] = html.H5(f"{num}. {val}")
+    
+        output_list.append(most_know)
+
+        # this is boilerplate but I am in a rush
+        least_know = df.iloc[:5, 1].to_list()
+        for i, val in enumerate(least_know):
+            num = i + 1
+            least_know[i] = html.H5(f"{num}. {val}")
+        
+        output_list.append(least_know)
+
+        # append yearly hires in the last five years
+        sql = """
+            SELECT 
+                EXTRACT (YEAR FROM date_hired) AS Y,
+                COUNT(emp_id)
+            FROM
+                emp
+            GROUP BY
+                Y
+            ORDER BY
+                Y
+            DESC
+                limit 5
+        """
+        col = ['Year', 'Count']
+        df = db_connect.query_db(sql, df_col=col)
+        fig2 = go.Figure(
+            data=[go.Scatter(x=df['Year'], y=df['Count'])],
+            layout={
+                "title": "Visualization of the Yearly Hires"
+            }
+            )
+
+        output_list.append(dcc.Graph(figure=fig2))
+
+        return output_list

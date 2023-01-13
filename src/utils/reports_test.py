@@ -75,5 +75,47 @@ sql = """
         know_delete_ind IS NULL
 """
 col = ['know_desc']
-print(''.join(db_connect.query_db(sql, df_col=col).values.flatten()))
+# print(''.join(db_connect.query_db(sql, df_col=col).values.flatten()))
 
+
+sql = """
+
+    SELECT t.emp_id, e.emp_name, t.ck
+    FROM
+        (SELECT
+            emp_id,
+            COUNT(know_id) as ck
+        FROM
+            emp_know
+        GROUP BY
+            emp_id
+        ORDER BY
+            ck) t
+    INNER JOIN
+        emp e
+    on
+        e.emp_id = t.emp_id
+    WHERE
+        emp_delete_ind IS NULL
+"""
+col = ['emp_id', 'emp_name', 'know_count']
+print(db_connect.query_db(sql, df_col=col))
+
+
+# yearly
+sql = """
+    SELECT 
+        EXTRACT (YEAR FROM date_hired) AS Y,
+        COUNT(emp_id)
+    FROM
+        emp
+    GROUP BY
+        Y
+    ORDER BY
+        Y
+    DESC
+        limit 5
+"""
+
+
+print(db_connect.query_db(sql))
