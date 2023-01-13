@@ -1,5 +1,5 @@
 import db_connect
-
+import pandas as pd
 
 # KNOWLEDGE
 
@@ -16,7 +16,7 @@ sql = """
     FROM knowledge
 """
 
-print(db_connect.query_db(sql))
+# print(db_connect.query_db(sql))
 
 
 # Knowledge with most and least employees knowing it
@@ -37,10 +37,13 @@ sql = """
         knowledge k
     on
         k.know_id = t.know_id
+    WHERE
+        know_delete_ind IS NULL
 """
 
 col = ['know_id', 'know_name', 'emp_count']
 print(db_connect.query_db(sql, df_col=col))
+print(db_connect.query_db(sql, df_col=col).iloc[-1, 1])
 
 
 # Get proposal frequency per week
@@ -64,3 +67,13 @@ print(db_connect.query_db(sql, df_col=col))
 
 
 # Knowledge Cloud
+sql = """
+    SELECT know_desc
+    FROM
+        knowledge
+    WHERE
+        know_delete_ind IS NULL
+"""
+col = ['know_desc']
+print(''.join(db_connect.query_db(sql, df_col=col).values.flatten()))
+
